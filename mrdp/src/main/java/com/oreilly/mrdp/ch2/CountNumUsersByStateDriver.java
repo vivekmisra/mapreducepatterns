@@ -36,45 +36,44 @@ public class CountNumUsersByStateDriver {
         Arrays.asList(statesArray));
 
     @Override
-    public void map(Object key, Text value, Context context)
-        throws IOException, InterruptedException {
+		public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
 
-      // Parse the input into a nice map.
-      Map<String, String> parsed = MRDPUtils
-          .transformXmlToMap(value.toString());
+			// Parse the input into a nice map.
+			Map<String, String> parsed = MRDPUtils.transformXmlToMap(value.toString());
 
-      // Get the value for the Location attribute
-      String location = parsed.get("Location");
+			// Get the value for the Location attribute
+			String location = parsed.get("Location");
 
-      // Look for a state abbreviation code if the location is not null or
-      // empty
-      if (location != null && !location.isEmpty()) {
-        boolean unknown = true;
-        // Make location uppercase and split on white space
-        String[] tokens = location.toUpperCase().split("\\s");
-        // For each token
-        for (String state : tokens) {
-          // Check if it is a state
-          if (states.contains(state)) {
+			// Look for a state abbreviation code if the location is not null or
+			// empty
+			if (location != null && !location.isEmpty()) {
+				boolean unknown = true;
+				// Make location uppercase and split on white space
+				String[] tokens = location.toUpperCase().split("\\s");
+				// For each token
+				for (String state : tokens) {
+					// Check if it is a state
+					if (states.contains(state)) {
 
-            // If so, increment the state's counter by 1 and flag it
-            // as not unknown
-            context.getCounter(STATE_COUNTER_GROUP, state).increment(1);
-            unknown = false;
-            break;
-          }
-        }
+						// If so, increment the state's counter by 1 and flag it
+						// as not unknown
+						context.getCounter(STATE_COUNTER_GROUP, state).increment(1);
+						unknown = false;
+						break;
+					}
+				}
 
-        // If the state is unknown, increment the counter
-        if (unknown) {
-          context.getCounter(STATE_COUNTER_GROUP, "Unknown").increment(1);
-        }
-      } else {
-        // If it is empty or null, increment the counter by 1
-        context.getCounter(STATE_COUNTER_GROUP, "NullOrEmpty").increment(1);
-      }
-    }
-  }
+				// If the state is unknown, increment the counter
+				if (unknown) {
+					context.getCounter(STATE_COUNTER_GROUP, "Unknown").increment(1);
+				}
+			} else {
+				// If it is empty or null, increment the counter by 1
+				context.getCounter(STATE_COUNTER_GROUP, "NullOrEmpty").increment(1);
+			}
+			 //context.write(context.getCounter(STATE_COUNTER_GROUP, "Unknown")d.setDisplayName() + "\t" + counter.getValue());
+		}
+	}
 
   public static void main(String[] args) throws Exception {
     Configuration conf = new Configuration();
@@ -88,6 +87,8 @@ public class CountNumUsersByStateDriver {
 
     Path input = new Path(otherArgs[0]);
     Path outputDir = new Path(otherArgs[1]);
+    // Clean up empty output directory
+    FileSystem.get(conf).delete(outputDir, true);
 
     Job job = Job.getInstance(conf, "Count Num Users By State");
     job.setJarByClass(CountNumUsersByStateDriver.class);
@@ -112,7 +113,7 @@ public class CountNumUsersByStateDriver {
     }
 
     // Clean up empty output directory
-    FileSystem.get(conf).delete(outputDir, true);
+    //FileSystem.get(conf).delete(outputDir, true);
 
     System.exit(code);
   }

@@ -24,6 +24,7 @@ public class ExternalJoinTest {
 
   @Before
   public void setup() throws Exception {
+	  System.setProperty("hadoop.home.dir", "c:\\winutil\\");
     driver = new MapDriver<Object, Text, Text, Text>(new ExternalJoinMapper());
     driver.getConfiguration().set(ExternalJoinMapper.REDIS_HOST, "localhost");
     driver.getConfiguration().set(ExternalJoinMapper.REDIS_PORT, "6379");

@@ -22,6 +22,7 @@ public class ReduceSideJoinTest {
   @Before
   public void setup() throws Exception {
     driver = new MultipleInputsMapReduceDriver<>();
+    System.setProperty("hadoop.home.dir", "c:\\winutil\\");
   }
 
   @After

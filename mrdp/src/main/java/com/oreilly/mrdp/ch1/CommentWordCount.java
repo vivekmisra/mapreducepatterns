@@ -77,6 +77,7 @@ public class CommentWordCount {
   }
 
   public static void main(String[] args) throws Exception {
+    System.setProperty("hadoop.home.dir", "c:\\winutil");
     Configuration conf = new Configuration();
     String[] otherArgs = new GenericOptionsParser(conf, args)
         .getRemainingArgs();
